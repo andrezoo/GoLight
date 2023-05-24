@@ -14,12 +14,7 @@ GREY = (228,228,228)
 BLUE = (103,155,228)
 # lines
 
-# background mesh
-screen.fill("white")
-for x in range(0, width, 40):
-    pygame.draw.line(screen, GREY, [x, 0], [x, heigth])
-for y in range(0, heigth, 40):
-    pygame.draw.line(screen, GREY, [0, y], [width, y])
+pygame.display.set_caption("GoLight 0.1v")
 
 # y=kx+b
 def drawLinear(k,b, r):
@@ -31,10 +26,10 @@ def drawVertical(x, r):
 
 # Rectangular Prism
 def makeRectPrism(a, b, c):
-    pygame.draw.polygon(screen, BLUE, (a,b,c))
-    pygame.gfxdraw.aapolygon(screen, (a,b,c), BLUE)
+    pygame.gfxdraw.filled_polygon(screen, (a,b,c), BLUE)
 
-makeRectPrism((120,120),(120,240),(240,240))
+screen.fill("white")
+lpos = [-1,-1]
 
 while running:
     # poll for events
@@ -42,15 +37,34 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEMOTION:
+            lpos=event.pos # set the last position of cursor
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            print(pos)
 
     # fill the screen with a color to wipe away anything from last frame
-
-
+    
     # RENDER YOUR GAME HERE
+    # background mesh
+
+    # сетка
+    for x in range(0, width, 40):
+        pygame.draw.line(screen, GREY, [x, 0], [x, heigth])
+    for y in range(0, heigth, 40):
+        pygame.draw.line(screen, GREY, [0, y], [width, y])
+
+    # прицел
+    if pygame.mouse.get_focused():
+        drawVertical(lpos[0],[0,heigth])
+        drawLinear(0, lpos[1], [0,width])
+
+    makeRectPrism((120,120),(120,240),(240,240))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
+    screen.fill("white")
 
-    clock.tick(60)  # limits FPS to 60
+    clock.tick(120)  # limits FPS to 60
 
 pygame.quit()
